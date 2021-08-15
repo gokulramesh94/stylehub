@@ -1,6 +1,6 @@
 const APP_CONFIG = {
   DEV: {
-    ROOT_URL: "https://run.mocky.io/v3",
+    ROOT_URL: "http://localhost:3000",
   },
   TEST: {
     ROOT_URL: "",
