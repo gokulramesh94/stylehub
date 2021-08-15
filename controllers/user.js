@@ -20,7 +20,15 @@ exports.addUser = (req, res, next) => {
     Users.findOne({ username })
       .then(async (response) => {
         if (response) {
-          res.send("User already exists!");
+          var encryptedPassword = await bcrypt.hash(password, 10);
+          response.password = encryptedPassword;
+          response.firstname = firstname;
+          response.lastname = lastname;
+          response.phone = phone;
+          response.email = email;
+          response.address = address;
+          await response.save();
+          res.send("User already exists! Updated user data.");
         } else {
           //Encrypt user password
           var encryptedPassword = await bcrypt.hash(password, 10);
@@ -47,7 +55,7 @@ exports.addUser = (req, res, next) => {
           await user.save();
 
           // return new user
-          res.status(201).json(user);
+          res.status(201).send("Registration Successful!");
         }
       })
       .catch((err) => {

@@ -43,8 +43,8 @@
         <input
           type="text"
           placeholder="Phone Number"
-          v-model="account.phoneNUmber"
-          name="phoneNUmber"
+          v-model="account.phone"
+          name="phoneNumber"
           autocapitalize="off"
           autocorrect="off"
           autocomplete="off"
@@ -69,7 +69,10 @@
         />
         <div class="action-wrapper">
           <Button :buttonText="buttonText" />
-          <Button buttonText="Cancel" @handleClick="(event) => cancelAction(event)" />
+          <Button
+            buttonText="Cancel"
+            @handleClick="(event) => cancelAction(event)"
+          />
         </div>
       </form>
     </div>
@@ -82,6 +85,7 @@ import Button from "../components/Button.vue";
 import Header from "../components/Header.vue";
 import cookieUtils from "../utils/cookies";
 import { Strings } from "../constants";
+import { userService } from "../services";
 
 export default {
   name: "Account",
@@ -97,7 +101,7 @@ export default {
         email: "",
         firstname: "",
         lastname: "",
-        phoneNumber: "",
+        phone: "",
         address: "",
       },
     };
@@ -122,17 +126,13 @@ export default {
   methods: {
     ...mapActions("user", ["addUser", "updateUser"]),
     submitForm() {
-      let user = cookieUtils.getCookie("user")
-        ? JSON.parse(cookieUtils.getCookie("user"))
-        : null;
-      if (user) {
-        console.log(user.username);
-        this.updateUser({ check: user.username, value: this.account });
-      } else {
-        this.addUser(this.account);
-        alert("Registration Successful!");
-        this.$router.push(Strings.ROUTES.LOGIN);
-      }
+      userService
+        .register(this.account)
+        .then((response) => {
+          alert(response);
+          this.$router.push(Strings.ROUTES.LOGIN);
+        })
+        .catch((error) => console.log(error));
     },
     cancelAction(event) {
       event.preventDefault();

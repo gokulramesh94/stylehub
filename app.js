@@ -1,6 +1,7 @@
 const path = require("path");
 
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const { MONGO_URI, PORT } = process.env;
@@ -10,6 +11,9 @@ const errorController = require("./controllers/error");
 const app = express();
 
 const routes = require("./routes/index");
+
+//Enable cors
+app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
