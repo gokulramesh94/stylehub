@@ -16,9 +16,7 @@ export default {
     ERROR_404: "/404",
   },
   API_ENDPOINTS: {
-    MEN: "/e1dfb32c-a226-4f40-96e2-f574bf14107c",
-    WOMEN: "/42d79cd9-0461-4abc-a904-d07a655094c3",
-    USERS: "/876777a1-b55c-4b33-ab51-75877d846e10",
+    FETCH_PRODUCTS_BY_CATEGORY: "/fetchProductsByCategory",
     FETCH_USER_INFO: "/fetch-user-info",
     LOGIN: "/login",
     REGISTER: "/registerUser",

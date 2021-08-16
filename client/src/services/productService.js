@@ -6,13 +6,16 @@ export default class productService {
     try {
       category = category ? category : "men";
       const response = await axios.get(
-        Strings.API_ENDPOINTS[category.toUpperCase()],
-        {}
+        Strings.API_ENDPOINTS.FETCH_PRODUCTS_BY_CATEGORY,
+        {
+          params: {
+            category,
+          },
+        }
       );
       return response.data;
     } catch (error) {
       console.log("Error - productService -> getProductByCategory : ", error);
     }
   };
-
 }

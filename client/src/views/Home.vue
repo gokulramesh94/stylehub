@@ -50,10 +50,14 @@ export default {
       productService
         .getProductByCategory(category)
         .then((response) => {
-          this.updateProducts(response);
+          if (response.errorMsg) {
+            alert(response.errorMsg);
+          } else {
+            this.updateProducts(response);
 
-          this.products = response;
-          this.$forceUpdate();
+            this.products = response;
+            this.$forceUpdate();
+          }
         })
         .catch((error) =>
           console.error(
