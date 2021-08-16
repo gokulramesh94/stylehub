@@ -20,7 +20,7 @@ exports.getProductById = (req, res, next) => {
   const id = req.query.id || "";
   console.log("Product ID : ", id);
   if (id && id !== "") {
-    Products.find({ id })
+    Products.findOne({ id })
       .then((product) => {
         res.send(product);
       })
