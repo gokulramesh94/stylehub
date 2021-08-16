@@ -1,7 +1,7 @@
 const Products = require("../models/product");
 
 exports.getProductByCategory = (req, res, next) => {
-  const category = req.body.category || "";
+  const category = req.query.category || "";
   console.log("category : ", category);
   if (category && category !== "") {
     Products.find({ category })
@@ -17,7 +17,7 @@ exports.getProductByCategory = (req, res, next) => {
 };
 
 exports.getProductById = (req, res, next) => {
-  const id = req.body.id || "";
+  const id = req.query.id || "";
   console.log("Product ID : ", id);
   if (id && id !== "") {
     Products.find({ id })
