@@ -7,23 +7,38 @@ export default class userService {
       let result = await appAxios.post(Strings.API_ENDPOINTS.LOGIN, {
         user: { username, password },
       });
-      if (result && result.data && result.data.username) return true;
-      else return false;
+      return result.data;
     } catch (error) {
+      alert("Oops! Something went wrong!");
       console.log("Error - userService -> login : ", error);
     }
   };
 
   static register = async (data) => {
     try {
-      console.log("data : ", data);
       let result = await appAxios.post(Strings.API_ENDPOINTS.REGISTER, {
         user: data,
       });
       return result.data;
     } catch (error) {
-      console.log(appAxios);
+      alert("Oops! Something went wrong!");
       console.log("Error - userService -> register : ", error);
+    }
+  };
+
+  static fetchUserInfo = async (username, token) => {
+    try {
+      let result = await appAxios.post(
+        Strings.API_ENDPOINTS.FETCH_USER_INFO,
+        {
+          username: username,
+        },
+        { headers: { "x-access-token": token } }
+      );
+      return result.data;
+    } catch (error) {
+      alert("Oops! Something went wrong!");
+      console.log("Error - userService -> fetchUserInfo : ", error);
     }
   };
 }

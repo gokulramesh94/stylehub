@@ -6,7 +6,7 @@ export default {
     cookieUtils.setCookie("user", JSON.stringify(user));
   },
   LOGOUT(state) {
-    state.user = { username: "", password: "", isLoggedIn: false };
+    state.user = { username: "", token: "" };
     cookieUtils.deleteCookie("user");
   },
   ADD_USER(state, user) {

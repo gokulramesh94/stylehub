@@ -55,7 +55,7 @@ export default {
       this.$router.push(Strings.ROUTES.HOME);
     },
     handleAccountClick() {
-      if (this.getUser.isLoggedIn) {
+      if (this.getUser.username !== null && this.getUser.username !== "") {
         this.$router.push(Strings.ROUTES.ACCOUNT);
       } else {
         this.$router.push(Strings.ROUTES.LOGIN);

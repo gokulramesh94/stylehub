@@ -80,12 +80,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import Button from "../components/Button.vue";
 import Header from "../components/Header.vue";
 import cookieUtils from "../utils/cookies";
 import { Strings } from "../constants";
 import { userService } from "../services";
+import { isValidPhoneNumber, isValidEmail } from "../utils/validations";
 
 export default {
   name: "Account",
@@ -107,7 +108,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("user", ["getUserById"]),
+    ...mapGetters("user", ["getUser"]),
     title: function() {
       if (cookieUtils.getCookie("user")) {
         return "Account Details";
@@ -124,15 +125,45 @@ export default {
     },
   },
   methods: {
-    ...mapActions("user", ["addUser", "updateUser"]),
     submitForm() {
-      userService
-        .register(this.account)
-        .then((response) => {
-          alert(response);
-          this.$router.push(Strings.ROUTES.LOGIN);
-        })
-        .catch((error) => console.log(error));
+      if (
+        this.account.username &&
+        this.account.username !== "" &&
+        this.account.password &&
+        this.account.password !== "" &&
+        this.account.email &&
+        this.account.email !== "" &&
+        this.account.firstname &&
+        this.account.firstname !== "" &&
+        this.account.lastname &&
+        this.account.lastname !== "" &&
+        this.account.phone &&
+        this.account.phone !== "" &&
+        this.account.address &&
+        this.account.address !== ""
+      ) {
+        if (isValidEmail(this.account.email)) {
+          if (isValidPhoneNumber(this.account.phone)) {
+            userService
+              .register(this.account)
+              .then((response) => {
+                alert(response);
+                if (this.getUser.username !== null) {
+                  this.$router.push(Strings.ROUTES.HOME);
+                } else {
+                  this.$router.push(Strings.ROUTES.LOGIN);
+                }
+              })
+              .catch((error) => console.log(error));
+          } else {
+            alert("Incorrect Phone Number format!");
+          }
+        } else {
+          alert("Incorrect Email format!");
+        }
+      } else {
+        alert("Please fill all the fields!");
+      }
     },
     cancelAction(event) {
       event.preventDefault();
@@ -140,12 +171,17 @@ export default {
     },
   },
   mounted() {
-    let user = cookieUtils.getCookie("user")
-      ? JSON.parse(cookieUtils.getCookie("user"))
-      : null;
-    if (user) {
-      let userInfo = this.getUserById(user.username);
-      this.account = userInfo[0] || {};
+    let user = JSON.parse(cookieUtils.getCookie("user")) || {};
+    if (user.username !== null) {
+      userService
+        .fetchUserInfo(user.username, user.token)
+        .then((response) => {
+          this.account = response || {};
+        })
+        .catch((error) => {
+          alert("Oops! Something went wrong!");
+          console.log(error);
+        });
     }
   },
 };
