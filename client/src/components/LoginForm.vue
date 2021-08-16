@@ -73,12 +73,11 @@ export default {
         userService
           .login(this.username, this.password)
           .then((response) => {
-            if (response) {
+            if (response && response.username !== null) {
               this.errorMessage = false;
               this.setUser({
                 username: this.username,
-                password: this.password,
-                isLoggedIn: true,
+                token: response.token,
               });
               this.$router.push(Strings.ROUTES.HOME);
             } else {

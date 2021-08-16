@@ -110,7 +110,7 @@ exports.fetchUserInfo = async (req, res, next) => {
     });
     if (user) {
       let { firstname, lastname, phone, email, address } = user;
-      res.send({ firstname, lastname, phone, email, address });
+      res.send({ username, firstname, lastname, phone, email, address });
     } else {
       res.send({ errorMsg: "username not found!" });
     }
