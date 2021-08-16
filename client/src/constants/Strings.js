@@ -17,6 +17,7 @@ export default {
   },
   API_ENDPOINTS: {
     FETCH_PRODUCTS_BY_CATEGORY: "/fetchProductsByCategory",
+    FETCH_PRODUCT_BY_ID: "/fetchProductById",
     FETCH_USER_INFO: "/fetch-user-info",
     LOGIN: "/login",
     REGISTER: "/registerUser",

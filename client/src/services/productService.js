@@ -18,4 +18,21 @@ export default class productService {
       console.log("Error - productService -> getProductByCategory : ", error);
     }
   };
+
+  static getProductById = async (id) => {
+    try {
+      id = id ? id : "";
+      const response = await axios.get(
+        Strings.API_ENDPOINTS.FETCH_PRODUCT_BY_ID,
+        {
+          params: {
+            id,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error - productService -> getProductById : ", error);
+    }
+  };
 }

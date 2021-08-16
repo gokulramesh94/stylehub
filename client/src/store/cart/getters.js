@@ -12,5 +12,4 @@ export default {
   getCartItems: (state) => state.carts,
   getWishlistCount: (state) => state.wishList.length,
   getWishlistItems: (state) => state.wishList,
-  getAllProducts: (state) => state.products,
 };

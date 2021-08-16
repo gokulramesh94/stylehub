@@ -21,7 +21,7 @@
               />
             </div>
             <div class="comments">
-              ({{ currentProduct.comments.length }} reviews)
+              ({{ currentProduct.comments ? currentProduct.comments.length : 0 }} reviews)
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@
 
     <div class="comment-section">
       <h2>Customer Reviews</h2>
-      <div v-if="currentProduct.comments.length > 0">
+      <div v-if="currentProduct.comments && currentProduct.comments.length > 0">
         <div
           class="my-review"
           v-for="(item, index) in currentProduct.comments"
@@ -51,7 +51,7 @@
           </div>
           <star-rating
             :max-rating="5"
-            v-model:rating="item.stars"
+            :rating="item.ratings"
             :read-only="true"
           />
           <div class="review">{{ item.review }}</div>
@@ -79,6 +79,7 @@ import Image from "../components/Image.vue";
 import Button from "../components/Button.vue";
 import Input from "../components/Input.vue";
 import ProductCounter from "../components/ProductCounter.vue";
+import { productService } from "../services";
 
 export default {
   name: "Pdp",
@@ -106,7 +107,7 @@ export default {
     StarRating,
   },
   computed: {
-    ...mapGetters("cart", ["getCartItems", "getAllProducts"]),
+    ...mapGetters("cart", ["getCartItems"]),
   },
   methods: {
     toggleAddCommentSection() {
@@ -131,17 +132,6 @@ export default {
       "updateProductInProducts",
     ]),
     ...mapActions("user", ["getUser"]),
-    fetchProduct() {
-      let allProducts = this.getAllProducts;
-      let currentproduct = allProducts.filter((product) => {
-        return product.id === this.productId;
-      });
-      this.currentProduct = currentproduct[0];
-      this.count = this.currentProduct.quantityc || this.count;
-      if (!this.currentProduct.quantity)
-        this.currentProduct["quantity"] = this.count;
-      console.log(this.currentProduct);
-    },
     increaseCount() {
       this.count++;
       console.log("increase : ", this.count);
@@ -164,7 +154,25 @@ export default {
     },
   },
   created() {
-    this.fetchProduct();
+    productService
+      .getProductById(this.productId)
+      .then((response) => {
+        if (response.errorMsg) {
+          alert(response.errorMsg);
+        } else {
+          this.currentProduct = response;
+          this.count = this.currentProduct.quantity || this.count;
+          if (!this.currentProduct.quantity)
+            this.currentProduct["quantity"] = this.count;
+          this.$forceUpdate();
+        }
+      })
+      .catch((error) =>
+        console.error(
+          "Error while fetching products from the product service : ",
+          error
+        )
+      );
   },
 };
 </script>
