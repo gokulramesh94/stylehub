@@ -21,7 +21,10 @@
               />
             </div>
             <div class="comments">
-              ({{ currentProduct.comments ? currentProduct.comments.length : 0 }} reviews)
+              ({{
+                currentProduct.comments ? currentProduct.comments.length : 0
+              }}
+              reviews)
             </div>
           </div>
         </div>
@@ -60,7 +63,7 @@
       <div v-else>There are no reviews for this product.</div>
 
       <div class="post-review" v-if="addComment">
-        <Input :product="currentProduct" />
+        <Input :productId="currentProduct.id" @addComment="handleComment" />
       </div>
       <Button
         class="add-review-button"
@@ -110,6 +113,11 @@ export default {
     ...mapGetters("cart", ["getCartItems"]),
   },
   methods: {
+    handleComment(value) {
+      alert(value);
+      this.toggleAddCommentSection();
+      //location.reload();
+    },
     toggleAddCommentSection() {
       if (!this.addComment) this.addCommentButtonText = "Cancel";
       else this.addCommentButtonText = "Add a Review";

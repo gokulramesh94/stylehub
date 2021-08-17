@@ -16,6 +16,7 @@ export default {
     ERROR_404: "/404",
   },
   API_ENDPOINTS: {
+    ADD_COMMENT: "/add-comment",
     FETCH_PRODUCTS_BY_CATEGORY: "/fetchProductsByCategory",
     FETCH_PRODUCT_BY_ID: "/fetchProductById",
     FETCH_USER_INFO: "/fetch-user-info",

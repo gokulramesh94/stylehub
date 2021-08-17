@@ -9,7 +9,7 @@
           <!-- <br><br><img :src="require(this.userReview.userImage.name)" alt="Image not found"/> -->
         </p>
         <div class="rate">
-          <star-rating :max-rating="5" v-model:rating="userReview.stars" />
+          <star-rating :max-rating="5" :rating="ratings" />
         </div>
       </div>
       <div class="title">
@@ -18,7 +18,7 @@
           type="text"
           name="title"
           placeholder="Review Title"
-          v-model="userReview.title"
+          v-model="title"
         />
       </div>
       <div class="review">
@@ -30,7 +30,7 @@
         <textarea
           name="review"
           placeholder="How do you like the product?"
-          v-model="userReview.review"
+          v-model="review"
         />
       </div>
 
@@ -41,64 +41,58 @@
 
 <script>
 import StarRating from "vue-star-rating";
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
+import { productService } from "../services";
 
 export default {
   data() {
     return {
-      userReview: {
-        title: "",
-        review: "",
-        stars: 0,
-        user: "swagat",
-      },
+      title: "",
+      review: "",
+      ratings: 1,
     };
   },
   components: {
     StarRating,
   },
   props: {
-    product: {
-      type: Object,
-      default() {
-        return {};
-      },
+    productId: {
+      type: String,
+      default: "",
     },
   },
   computed: {
-    ...mapGetters("cart", ["getProductFromCart"]),
+    ...mapGetters("user", ["getUser"]),
   },
   methods: {
-    ...mapActions("cart", ["updateCart", "updateProductInProducts"]),
-    handleImage(value) {
-      console.log(value);
-      this.userReview.userImage = value;
-    },
     saveComment() {
-      if (this.userReview.title != "" && this.userReview.review != "") {
-        let comments = this.product.comments;
-        //console.log("before : ", comments);
-        comments = [...comments, this.userReview];
-        //console.log("after : ", comments);
+      let user = this.getUser;
+      if (user && user.username != null && user.username !== "") {
+        let username = user.username;
+        let token = user.token;
 
-        this.updateCart({
-          product: this.product,
-          key: "comments",
-          value: comments,
-        });
-        let product = this.product;
-        product.comments = comments;
-        this.updateProductInProducts(product);
-        alert("Thanks! Your review matters.");
-        location.reload();
+        if (this.title != "" && this.review != "") {
+          user = this.getUser.username;
+          productService
+            .addComment(
+              username,
+              this.title,
+              this.review,
+              this.ratings,
+              this.productId,
+              token
+            )
+            .then((response) => {
+              let message = response;
+              if (response.errorMsg) message = response.errormsg;
+              this.$emit("addComment", message);
+            });
+        } else {
+          alert("The review title and details can't be empty.");
+        }
       } else {
-        alert("The review title and details can't be empty.");
+        alert("Please sign in to add a review about the product!");
       }
-    },
-    fileSelected(event) {
-      console.log(event.target.files[0]);
-      this.userReview.userImage = event.target.files[0];
-      console.log("You uploaded: " + this.userReview.userImage.name);
     },
   },
 };
