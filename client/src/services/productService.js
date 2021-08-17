@@ -35,4 +35,31 @@ export default class productService {
       console.log("Error - productService -> getProductById : ", error);
     }
   };
+
+  static addComment = async (
+    user,
+    title,
+    review,
+    ratings,
+    productId,
+    token
+  ) => {
+    try {
+      user = user ? user : "";
+      const response = await axios.post(
+        Strings.API_ENDPOINTS.ADD_COMMENT,
+        {
+          user,
+          title,
+          review,
+          ratings,
+          productId,
+        },
+        { headers: { "x-access-token": token } }
+      );
+      return response.data;
+    } catch (error) {
+      console.log("Error - productService -> addComment : ", error);
+    }
+  };
 }
