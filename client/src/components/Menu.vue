@@ -10,6 +10,11 @@
       <div class="menu-item">
         <div @click="handleMenuClick('/about')">About</div>
       </div>
+      <div class="menu-item">
+        <div @click="handleMenuClick('/order-history', true)">
+          Order History
+        </div>
+      </div>
     </div>
     <div class="copyright">
       <small>&copy; Copyright 2021, StyleHub Corporation</small>
@@ -18,6 +23,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Image from "../components/Image.vue";
 import { Images, Strings } from "../constants";
 
@@ -30,9 +36,17 @@ export default {
     };
   },
   methods: {
-    handleMenuClick(path) {
-      this.$router.push(path);
+    handleMenuClick(path, check) {
+      if (check) {
+        if (this.isLoggedIn) this.$router.push(path);
+        else alert("Please sign in to view order history!");
+      } else {
+        this.$router.push(path);
+      }
     },
+  },
+  computed: {
+    ...mapGetters("user", ["isLoggedIn"]),
   },
   components: {
     Image,

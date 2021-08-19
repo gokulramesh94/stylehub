@@ -46,6 +46,11 @@ const routes = [
     component: () => import("../views/OrderConfirmation.vue"),
   },
   {
+    path: Strings.ROUTES.ORDER_HISTORY,
+    name: "OrderHistory",
+    component: () => import("../views/OrderHistory.vue"),
+  },
+  {
     path: Strings.ROUTES.LOGIN,
     name: "Login",
     component: () => import("../views/Login.vue"),

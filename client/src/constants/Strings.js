@@ -13,6 +13,7 @@ export default {
     WISHLIST: "/wishlist",
     ORDER_CONFIRMATION: "/order-confirmation",
     PDP: "/pdp/:productId",
+    ORDER_HISTORY: "/order-history",
     ERROR_404: "/404",
   },
   API_ENDPOINTS: {
@@ -30,6 +31,7 @@ export default {
     REMOVE_ITEM_FROM_WISHLIST: "/remove-item-from-wishlist",
     GET_WISHLIST_ITEMS: "/get-wishlist-items",
     PLACE_ORDER: "/place-order",
+    FECTH_ORDER_HISTORY: "/get-order-history",
   },
   SHOP: {
     CATEGORIES: [
