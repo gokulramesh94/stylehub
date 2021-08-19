@@ -21,7 +21,6 @@
             icon="star"
           />
         </div>
-        <div class="comments">({{ product.comments.length }} reviews)</div>
       </div>
       <div class="remove" @click="removeProduct">Remove</div>
     </div>
@@ -29,9 +28,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Image from "../Image.vue";
 import ProductCounter from "../ProductCounter.vue";
+import { productService } from "../../services";
 
 export default {
   name: "CartItem",
@@ -52,6 +52,10 @@ export default {
       count: this.product.quantity || 1,
     };
   },
+  computed: {
+    ...mapGetters("user", ["getUser", "isLoggedIn"]),
+    ...mapGetters("cart", ["getProductFromCart"]),
+  },
   methods: {
     ...mapActions("cart", ["removeProductFromCart", "updateCart"]),
     increaseCount() {
@@ -60,7 +64,16 @@ export default {
         product: this.product,
         key: "quantity",
         value: this.count,
+        isLoggedIn: this.isLoggedIn,
       });
+      if (this.isLoggedIn) {
+        let user = this.getUser;
+        productService.addItemToCart(
+          user.username,
+          this.getProductFromCart(this.product.id),
+          user.token
+        );
+      }
     },
     decreaseCount() {
       if (this.count > 1) {
@@ -69,12 +82,47 @@ export default {
           product: this.product,
           key: "quantity",
           value: this.count,
+          isLoggedIn: this.isLoggedIn,
         });
+        if (this.isLoggedIn) {
+          let user = this.getUser;
+          productService.removeItemFromCart(
+            user.username,
+            this.getProductFromCart(this.product.id),
+            user.token
+          );
+        }
       }
     },
     removeProduct() {
       if (confirm("Would you like to remove this product from Cart?")) {
-        this.removeProductFromCart(this.product);
+        if (this.isLoggedIn) {
+          let user = this.getUser;
+          this.updateCart({
+            product: this.product,
+            key: "quantity",
+            value: 0,
+            isLoggedIn: this.isLoggedIn,
+          });
+          productService
+            .removeItemFromCart(
+              user.username,
+              this.getProductFromCart(this.product.id),
+              user.token
+            )
+            .then((response) => {
+              this.removeProductFromCart({
+                product: this.product,
+                isLoggedIn: this.isLoggedIn,
+              });
+              alert(response);
+            });
+        } else {
+          this.removeProductFromCart({
+            product: this.product,
+            isLoggedIn: this.isLoggedIn,
+          });
+        }
       }
     },
   },

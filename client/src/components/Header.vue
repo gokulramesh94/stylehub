@@ -3,8 +3,8 @@
     <div class="menu-actions">
       <div class="wishlist-icon-wrapper" @click="handleWishlistClick">
         <FontAwesomeIcon icon="heart" />
-        <div v-if="getWishlistCount !== 0" class="cart-item-count">
-          {{ getWishlistCount }}
+        <div v-if="wishList.length !== 0" class="cart-item-count">
+          {{ wishList.length }}
         </div>
       </div>
       <div class="cart-icon-wrapper" @click="handleCartClick">
@@ -20,7 +20,7 @@
       </div>
       <div
         class="account-wrapper"
-        @click="logout"
+        @click="handleLogout"
         v-if="getUser.username !== ''"
       >
         <FontAwesomeIcon icon="sign-out-alt" />
@@ -38,12 +38,14 @@ import { mapActions, mapGetters } from "vuex";
 import Image from "../components/Image.vue";
 import { Images, Strings } from "../constants";
 import cookieUtils from "../utils/cookies";
+import { productService } from "../services";
 
 export default {
   name: "Header",
   data() {
     return {
       logo: Images.STYLEHUB_LOGO_WHITE,
+      wishList: [],
     };
   },
   components: {
@@ -51,6 +53,15 @@ export default {
   },
   methods: {
     ...mapActions("user", ["logout"]),
+    ...mapActions("cart", [
+      "addProductsToWishlist",
+      "replaceCartFromServer",
+      "replaceCartFromLocal",
+    ]),
+    handleLogout() {
+      this.logout();
+      location.reload();
+    },
     redirectUser() {
       this.$router.push(Strings.ROUTES.HOME);
     },
@@ -70,9 +81,50 @@ export default {
       else alert("Please Sign In to add product to wishlist.");
     },
   },
+  watch: {
+    getWishlistItems: function(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.wishList = newValue;
+      }
+    },
+  },
   computed: {
-    ...mapGetters("cart", ["getCartCount", "getWishlistCount"]),
-    ...mapGetters("user", ["getUser"]),
+    ...mapGetters("cart", ["getCartCount", "getWishlistItems"]),
+    ...mapGetters("user", ["getUser", "isLoggedIn"]),
+  },
+  mounted() {
+    if (this.isLoggedIn) {
+      let user = this.getUser;
+      productService
+        .fetchCartItems(user.username, user.token)
+        .then((response) => {
+          if (response) {
+            this.replaceCartFromServer(response);
+          } else {
+            alert("Session timed out. Please sign in to continue.");
+            this.logout();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      productService
+        .getWishlistItems(user.username, user.token)
+        .then((response) => {
+          if (response) {
+            this.wishList = response;
+            this.addProductsToWishlist(response);
+          } else {
+            alert("Session timed out. Please sign in to continue.");
+            this.logout();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      this.replaceCartFromLocal();
+    }
   },
 };
 </script>

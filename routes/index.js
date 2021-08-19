@@ -22,12 +22,13 @@ router.post("/fetch-user-info", auth, userController.fetchUserInfo);
 
 // Cart Routes
 router.post("/add-item-to-cart", auth, cartController.addItemToCart);
-router.post(
-  "/remove-item-from-cart",
-  auth.apply,
-  cartController.removeItemFromCart
-);
+router.post("/remove-item-from-cart", auth, cartController.removeItemFromCart);
 router.get("/get-cart-items", auth, cartController.getCartItems);
+router.post(
+  "/remove-all-items-from-cart",
+  auth,
+  cartController.removeAllItemsFromCart
+);
 
 // Wishlist Routes
 router.post(

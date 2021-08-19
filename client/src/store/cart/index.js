@@ -6,12 +6,7 @@ const state = {
   carts: localStorage.getItem("carts")
     ? JSON.parse(localStorage.getItem("carts"))
     : [],
-  wishList: localStorage.getItem("wishList")
-    ? JSON.parse(localStorage.getItem("wishList"))
-    : [],
-  orders: localStorage.getItem("orders")
-    ? JSON.parse(localStorage.getItem("orders"))
-    : [],
+  wishList: [],
   products: localStorage.getItem("products")
     ? JSON.parse(localStorage.getItem("products"))
     : [],
