@@ -16,9 +16,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Button from "../components/Button.vue";
 import { Strings } from "../constants";
+import { productService } from "../services";
 
 export default {
   name: "OrderSummary",
@@ -34,6 +35,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("user", ["getUser", "isLoggedIn"]),
     grandTotal: function() {
       let count = 0;
       this.data.forEach((item) => {
@@ -43,16 +45,47 @@ export default {
     },
   },
   methods: {
-    ...mapActions("cart", ["removeAllProductsFromCart", "placeOrder"]),
+    ...mapActions("cart", ["removeAllProductsFromCart"]),
     confirmOrder() {
-      this.placeOrder({
-        date: Date.now(),
-        order: this.data,
-        total: this.grandTotal,
-      });
+      console.log(this.isLoggedIn);
+      if (this.isLoggedIn) {
+        let user = this.getUser;
+        productService
+          .placeOrder(user.username, {
+            date: Date.now(),
+            order: this.data,
+            total: this.grandTotal,
+          })
+          .then((response) => {
+            console.log("true");
+            this.showConfirmation(response, user);
+          });
+      } else {
+        productService
+          .placeOrder(null, {
+            date: Date.now(),
+            order: this.data,
+            total: this.grandTotal,
+          })
+          .then((response) => {
+            console.log("false");
+            this.showConfirmation(response, null);
+          });
+      }
+    },
+    showConfirmation(message, user) {
       this.removeAllProductsFromCart();
-      alert("Order Placed!");
-      this.$router.push(Strings.ROUTES.HOME);
+      alert(message);
+      console.log(user);
+      if (user) {
+        productService
+          .removeAllItemsFromCart(user.username, user.token)
+          .then(() => {
+            this.$router.push(Strings.ROUTES.HOME);
+          });
+      } else {
+        this.$router.push(Strings.ROUTES.HOME);
+      }
     },
   },
 };

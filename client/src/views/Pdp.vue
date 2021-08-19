@@ -110,7 +110,8 @@ export default {
     StarRating,
   },
   computed: {
-    ...mapGetters("cart", ["getCartItems"]),
+    ...mapGetters("user", ["getUser", "isLoggedIn"]),
+    ...mapGetters("cart", ["getCartItems", "getProductFromCart"]),
   },
   methods: {
     handleComment(value) {
@@ -139,10 +140,8 @@ export default {
       "updateProducts",
       "updateProductInProducts",
     ]),
-    ...mapActions("user", ["getUser"]),
     increaseCount() {
       this.count++;
-      console.log("increase : ", this.count);
       this.currentProduct.quantity = this.count;
     },
     decreaseCount() {
@@ -156,9 +155,25 @@ export default {
         product: this.currentProduct,
         key: "quantity",
         value: this.count,
+        isLoggedIn: this.isLoggedIn,
       });
+      if (this.isLoggedIn) {
+        let user = this.getUser;
+        productService
+          .addItemToCart(
+            user.username,
+            this.getProductFromCart(this.currentProduct.id),
+            user.token
+          )
+          .then((response) => {
+            alert(response);
+          });
+      }
       this.updateProductInProducts(this.currentProduct);
-      this.addProductToCart(this.currentProduct);
+      this.addProductToCart({
+        product: this.currentProduct,
+        isLoggedIn: this.isLoggedIn,
+      });
     },
   },
   created() {
