@@ -29,6 +29,7 @@ export default {
     ADD_ITEM_TO_WISHLIST: "/add-item-to-wishlist",
     REMOVE_ITEM_FROM_WISHLIST: "/remove-item-from-wishlist",
     GET_WISHLIST_ITEMS: "/get-wishlist-items",
+    PLACE_ORDER: "/place-order",
   },
   SHOP: {
     CATEGORIES: [

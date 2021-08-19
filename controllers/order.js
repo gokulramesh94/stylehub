@@ -41,7 +41,7 @@ exports.placeOrder = (req, res, next) => {
 };
 
 exports.fetchOrders = (req, res, next) => {
-  const { username } = req.body;
+  const { username } = req.query;
   if (username) {
     User.findOne({ username }).then((user) => {
       if (user) {
