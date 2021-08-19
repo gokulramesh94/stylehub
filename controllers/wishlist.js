@@ -103,7 +103,7 @@ exports.removeItemFromWishlist = async (req, res, next) => {
 };
 
 exports.getWishlistItems = async (req, res, next) => {
-  const { username } = req.body;
+  const { username } = req.query;
   if (username) {
     User.findOne({ username })
       .then((user) => {

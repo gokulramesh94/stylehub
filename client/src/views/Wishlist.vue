@@ -2,7 +2,7 @@
   <div class="wishlist-wrapper">
     <Header />
     <div class="content">
-      <CartList :data="getWishlistItems" />
+      <List :data="getWishlistItems" />
     </div>
   </div>
 </template>
@@ -10,13 +10,13 @@
 <script>
 import { mapGetters } from "vuex";
 import Header from "../components/Header.vue";
-import CartList from "../components/Cart/CartList.vue";
+import List from "../components/WishList/List.vue";
 
 export default {
   name: "Wishlist",
   components: {
     Header,
-    CartList,
+    List,
   },
   computed: {
     ...mapGetters("cart", ["getWishlistItems"]),

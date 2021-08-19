@@ -26,6 +26,9 @@ export default {
     ADD_ITEM_TO_CART: "/add-item-to-cart",
     REMOVE_ITEM_FROM_CART: "/remove-item-from-cart",
     REMOVE_ALL_ITEMS_FROM_CART: "/remove-all-items-from-cart",
+    ADD_ITEM_TO_WISHLIST: "/add-item-to-wishlist",
+    REMOVE_ITEM_FROM_WISHLIST: "/remove-item-from-wishlist",
+    GET_WISHLIST_ITEMS: "/get-wishlist-items",
   },
   SHOP: {
     CATEGORIES: [
