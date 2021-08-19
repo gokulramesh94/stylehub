@@ -22,6 +22,10 @@ export default {
     FETCH_USER_INFO: "/fetch-user-info",
     LOGIN: "/login",
     REGISTER: "/registerUser",
+    FETCH_CART_ITEMS: "/get-cart-items",
+    ADD_ITEM_TO_CART: "/add-item-to-cart",
+    REMOVE_ITEM_FROM_CART: "/remove-item-from-cart",
+    REMOVE_ALL_ITEMS_FROM_CART: "/remove-all-items-from-cart",
   },
   SHOP: {
     CATEGORIES: [

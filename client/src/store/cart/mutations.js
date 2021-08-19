@@ -1,5 +1,5 @@
 export default {
-  ADD_PRODUCT_TO_CART(state, product) {
+  ADD_PRODUCT_TO_CART(state, { product, isLoggedIn }) {
     const carts = [...state.carts];
     const cartIndex = carts.findIndex((cart) => cart.id === product.id);
 
@@ -9,9 +9,9 @@ export default {
 
     state.carts = [...carts];
 
-    localStorage.setItem("carts", JSON.stringify(state.carts));
+    if (!isLoggedIn) localStorage.setItem("carts", JSON.stringify(state.carts));
   },
-  REMOVE_PRODUCT_FROM_CART(state, product) {
+  REMOVE_PRODUCT_FROM_CART(state, { product, isLoggedIn }) {
     const carts = [...state.carts];
     const cartIndex = carts.findIndex((cart) => cart.id === product.id);
 
@@ -21,19 +21,17 @@ export default {
 
     state.carts = [...carts];
 
-    localStorage.setItem("carts", JSON.stringify(state.carts));
+    if (!isLoggedIn) localStorage.setItem("carts", JSON.stringify(state.carts));
+  },
+  ADD_PRODUCTS_TO_WISHLIST(state, products) {
+    state.wishList = products;
   },
   ADD_PRODUCT_TO_WISHLIST(state, product) {
     const wishList = [...state.wishList];
-    const wishListIndex = wishList.findIndex((item) => item.id === product.id);
 
-    if (wishListIndex === -1) {
-      wishList.push({ ...product, quantity: 1 });
-    }
+    wishList.push(product);
 
     state.wishList = [...wishList];
-
-    localStorage.setItem("wishList", JSON.stringify(state.wishList));
   },
   REMOVE_PRODUCT_FROM_WISHLIST(state, product) {
     const wishList = [...state.wishList];
@@ -44,22 +42,15 @@ export default {
     }
 
     state.wishList = [...wishList];
-
-    localStorage.setItem("wishList", JSON.stringify(state.wishList));
   },
   REMOVE_ALL_PRODUCTS_FROM_CART(state) {
     state.carts = [];
     localStorage.setItem("carts", JSON.stringify(state.carts));
   },
-  REMOVE_ALL_PRODUCTS_FROM_WISHLIST(state) {
-    state.wishList = [];
-    localStorage.setItem("wishList", JSON.stringify(state.wishList));
-  },
   CURRENT_PRODUCT: (state, product) => {
     state.currentProduct = product;
   },
-  UPDATE_CART: (state, { product, key, value }) => {
-    console.log(product.id + " " + key + " " + value);
+  UPDATE_CART: (state, { product, key, value, isLoggedIn }) => {
     let filteredProduct = state.carts.filter((item) => {
       return item.id === product.id;
     });
@@ -68,23 +59,7 @@ export default {
     } else {
       state.carts.push(product);
     }
-    localStorage.setItem("carts", JSON.stringify(state.carts));
-  },
-  UPDATE_WISHLIST: (state, { product, key, value }) => {
-    console.log(product.id + " " + key + " " + value);
-    let filteredProduct = state.wishList.filter((item) => {
-      return item.id === product.id;
-    });
-    if (filteredProduct.length > 0) {
-      filteredProduct[0][key] = value;
-    } else {
-      state.wishList.push(product);
-    }
-    localStorage.setItem("wishList", JSON.stringify(state.wishList));
-  },
-  PLACE_ORDER: (state, order) => {
-    state.orders = [...state.orders, order];
-    localStorage.setItem("orders", JSON.stringify(state.orders));
+    if (!isLoggedIn) localStorage.setItem("carts", JSON.stringify(state.carts));
   },
   UPDATE_PRODUCTS: (state, products) => {
     products.forEach((product) => {
@@ -105,5 +80,16 @@ export default {
 
     console.log(state.products);
     localStorage.setItem("products", JSON.stringify(state.products));
+  },
+  REPLACE_CART_FROM_SERVER: (state, products) => {
+    state.carts = products;
+  },
+  REPLACE_CART_FROM_LOCAL: (state) => {
+    let cart = localStorage.getItem("carts");
+    if (cart) {
+      state.carts = JSON.parse(cart);
+    } else {
+      state.carts = [];
+    }
   },
 };

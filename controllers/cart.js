@@ -111,8 +111,38 @@ exports.removeItemFromCart = async (req, res, next) => {
   }
 };
 
-exports.getCartItems = async (req, res, next) => {
+exports.removeAllItemsFromCart = (req, res, next) => {
   const { username } = req.body;
+  if (username) {
+    User.findOne({ username })
+      .then((user) => {
+        if (user) {
+          Cart.deleteMany({ username })
+            .then((result) => {
+              if (result) res.send("All Products removed from cart.");
+              else res.send("Product not found!");
+            })
+            .catch((error) => {
+              console.log(error);
+              res.send("Could not remove products from cart!");
+            });
+        } else {
+          res.send("username not found!");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        res.send("Something went wrong! Could not remove products cart");
+      });
+  } else {
+    res.send({
+      errorMsg: "Username is mandatory!",
+    });
+  }
+};
+
+exports.getCartItems = async (req, res, next) => {
+  const { username } = req.query;
   if (username) {
     User.findOne({ username })
       .then((user) => {

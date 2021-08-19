@@ -31,6 +31,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { productService } from "../../services";
 import HeartButton from "../HeartButton.vue";
 import Image from "../Image.vue";
 
@@ -55,15 +56,28 @@ export default {
   },
   methods: {
     handleWishList(flag) {
-      if (flag) {
-        this.addProductToWishlist(this.product);
-        //this.$store.dispatch("cart/addProductToWishlist", this.product);
+      if (this.isLoggedIn) {
+        let user = this.getUser;
+        if (flag) {
+          this.addProductToWishlist(this.product);
+          productService
+            .addItemToWishlist(user.username, this.product, user.token)
+            .then((response) => {
+              console.log(response);
+            });
+        } else {
+          this.removeProductFromWishlist(this.product);
+          productService
+            .removeItemFromWishlist(user.username, this.product, user.token)
+            .then((response) => {
+              console.log(response);
+            });
+        }
       } else {
-        this.removeProductFromWishlist(this.product);
+        alert("Session timed out! Please sign in to continue!");
       }
     },
     handleClick() {
-      //this.currentProduct(this.product);
       this.$router.push("/pdp/" + this.product.id);
     },
     ...mapActions("cart", [
@@ -72,13 +86,21 @@ export default {
       "currentProduct",
     ]),
   },
+  watch: {
+    getWishlistItems: function(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        let products = this.getProductFromWishlist(this.product.id);
+        this.isWishListed = products && products.length > 0 ? true : false;
+      }
+    },
+  },
   computed: {
-    ...mapGetters("cart", ["getProductFromWishlist"]),
+    ...mapGetters("user", ["getUser", "isLoggedIn"]),
+    ...mapGetters("cart", ["getProductFromWishlist", "getWishlistItems"]),
   },
   mounted() {
     let products = this.getProductFromWishlist(this.product.id);
-
-    this.isWishListed = products.length > 0 ? true : false;
+    this.isWishListed = products && products.length > 0 ? true : false;
   },
 };
 </script>
